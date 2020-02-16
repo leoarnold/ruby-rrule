@@ -2456,39 +2456,4 @@ describe RRule::Rule do
       ])
     end
   end
-
-  describe 'validation' do
-    it 'raises RRule::InvalidRRule if FREQ is not provided' do
-      expect { RRule::Rule.new('') }.to raise_error(RRule::InvalidRRule)
-      expect { RRule::Rule.new('FREQ=') }.to raise_error(RRule::InvalidRRule)
-      expect { RRule::Rule.new('FREQ=FOO') }.to raise_error(RRule::InvalidRRule)
-      expect { RRule::Rule.new('COUNT=1') }.to raise_error(RRule::InvalidRRule)
-      expect { RRule::Rule.new('FREQ=FOO;COUNT=1') }.to raise_error(RRule::InvalidRRule)
-    end
-
-    it 'raises RRule::InvalidRRule if INTERVAL is not a positive integer' do
-      dtstart = Time.parse('Tue Sep  2 06:00:00 PDT 1997')
-      timezone = 'America/New_York'
-
-      expect { RRule::Rule.new('FREQ=DAILY;INTERVAL=0', dtstart: dtstart, tzid: timezone) }.to raise_error(RRule::InvalidRRule)
-      expect { RRule::Rule.new('FREQ=DAILY;INTERVAL=-1', dtstart: dtstart, tzid: timezone) }.to raise_error(RRule::InvalidRRule)
-      expect { RRule::Rule.new('FREQ=DAILY;INTERVAL=1.1', dtstart: dtstart, tzid: timezone) }.to raise_error(RRule::InvalidRRule)
-      expect { RRule::Rule.new('FREQ=DAILY;INTERVAL=BOOM', dtstart: dtstart, tzid: timezone) }.to raise_error(RRule::InvalidRRule)
-    end
-
-    it 'raises RRule::InvalidRRule if COUNT is not an integer' do
-      dtstart = Time.parse('Tue Sep  2 06:00:00 PDT 1997')
-      timezone = 'America/New_York'
-
-      expect { RRule::Rule.new('FREQ=DAILY;COUNT=BOOM', dtstart: dtstart, tzid: timezone) }.to raise_error(RRule::InvalidRRule)
-      expect { RRule::Rule.new('FREQ=DAILY;COUNT=1.5', dtstart: dtstart, tzid: timezone) }.to raise_error(RRule::InvalidRRule)
-    end
-
-    it 'raises RRule::InvalidRRule if COUNT is negative' do
-      dtstart = Time.parse('Tue Sep  2 06:00:00 PDT 1997')
-      timezone = 'America/New_York'
-
-      expect { RRule::Rule.new('FREQ=DAILY;COUNT=-1', dtstart: dtstart, tzid: timezone) }.to raise_error(RRule::InvalidRRule)
-    end
-  end
 end

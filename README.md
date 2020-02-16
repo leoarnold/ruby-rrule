@@ -62,6 +62,34 @@ rrule.all
 => [2016-07-01 00:00:00 -0700, 2016-07-03 00:00:00 -0700]
 ```
 
+### ActiveModel validator
+
+In every project using `ActiveModel` the `RruleValidator` will automatically be loaded and can be used like this
+
+```ruby
+class MyEvent
+  include ActiveModel::Validations
+
+  attr_reader :recurrence_rule
+
+  def initialize(recurrence_rule)
+    @recurrence_rule = recurrence_rule
+  end
+
+  validates :recurrence_rule, rrule: true
+end
+```
+
+or in a Rails app
+
+```ruby
+class MyEvent < ApplicationRecord
+  field :recurrence_rule, type: String
+
+  validates :recurrence_rule, rrule: true
+end
+```
+
 ## License
 
 Copyright 2018 Square Inc.

@@ -93,53 +93,11 @@ module RRule
     end
 
     def parse_options(rule)
-      options = { interval: 1, wkst: 1 }
+      options = Parser.parse!(rule).transform_keys { |key| key.downcase.to_sym }
 
-      params = rule.split(';')
-      params.each do |param|
-        option, value = param.split('=')
-
-        case option
-        when 'FREQ'
-          options[:freq] = value
-        when 'COUNT'
-          i = begin
-            Integer(value)
-          rescue ArgumentError
-            raise InvalidRRule, 'COUNT must be a non-negative integer'
-          end
-          raise InvalidRRule, 'COUNT must be a non-negative integer' if i < 0
-          options[:count] = i
-        when 'UNTIL'
-          # The value of the UNTIL rule part MUST have the same
-          # value type as the "DTSTART" property.
-          options[:until] = @dtstart.is_a?(Date) ? Date.parse(value) : Time.parse(value)
-        when 'INTERVAL'
-          i = Integer(value) rescue 0
-          raise InvalidRRule, 'INTERVAL must be a positive integer' unless i > 0
-          options[:interval] = i
-        when 'BYHOUR'
-          options[:byhour] = value.split(',').compact.map(&:to_i)
-        when 'BYMINUTE'
-          options[:byminute] = value.split(',').compact.map(&:to_i)
-        when 'BYSECOND'
-          options[:bysecond] = value.split(',').compact.map(&:to_i)
-        when 'BYDAY'
-          options[:byweekday] = value.split(',').map { |day| Weekday.parse(day) }
-        when 'BYSETPOS'
-          options[:bysetpos] = value.split(',').map(&:to_i)
-        when 'WKST'
-          options[:wkst] = RRule::WEEKDAYS.index(value)
-        when 'BYMONTH'
-          options[:bymonth] = value.split(',').compact.map(&:to_i)
-        when 'BYMONTHDAY'
-          options[:bymonthday] = value.split(',').map(&:to_i)
-        when 'BYWEEKNO'
-          options[:byweekno] = value.split(',').map(&:to_i)
-        when 'BYYEARDAY'
-          options[:byyearday] = value.split(',').map(&:to_i)
-        end
-      end
+      options[:byweekday] = options.delete(:byday).map{ |day| Weekday.parse(day) } if options.key?(:byday)
+      options[:wkst] = RRule::WEEKDAYS.index(options[:wkst]) || 1
+      options[:interval] ||= 1
 
       unless options[:byweekno] || options[:byyearday] || options[:bymonthday] || options[:byweekday]
         case options[:freq]

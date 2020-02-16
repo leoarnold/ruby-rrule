@@ -47,7 +47,7 @@ module RRule
       when 'YEARLY'
         Yearly
       else
-        raise InvalidRRule, 'Valid FREQ value is required'
+        raise NotImplementedError, "Frequency '#{options[:freq]}' not implemented"
       end
     end
 
