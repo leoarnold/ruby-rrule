@@ -2323,6 +2323,94 @@ describe RRule::Rule do
     ])
   end
 
+  it 'raises a NotImplementedError when the FREQ value is not implemented yet' do
+    %w[SECONDLY MINUTELY HOURLY].each do |freq|
+      expect { RRule::Rule.new("FREQ=#{freq}") }.to raise_error(NotImplementedError, /'#{freq}'/)
+    end
+  end
+
+  context 'when FREQ is HOURLY' do
+    it 'returns the correct result with an rrule of FREQ=HOURLY;COUNT=30' do
+      rrule = 'FREQ=HOURLY;COUNT=30'
+      dtstart = Time.parse('Fri,	13	Mar	2020	13:13:42	PDT')
+      timezone = 'America/Los_Angeles'
+
+      rrule = RRule::Rule.new(rrule, dtstart: dtstart, tzid: timezone)
+      expect(rrule.all).to match_array([
+        Time.parse('Fri,	13	Mar	2020	13:13:42	PDT'),
+        Time.parse('Fri,	13	Mar	2020	14:13:42	PDT'),
+        Time.parse('Fri,	13	Mar	2020	15:13:42	PDT'),
+        Time.parse('Fri,	13	Mar	2020	16:13:42	PDT'),
+        Time.parse('Fri,	13	Mar	2020	17:13:42	PDT'),
+        Time.parse('Fri,	13	Mar	2020	18:13:42	PDT'),
+        Time.parse('Fri,	13	Mar	2020	19:13:42	PDT'),
+        Time.parse('Fri,	13	Mar	2020	20:13:42	PDT'),
+        Time.parse('Fri,	13	Mar	2020	21:13:42	PDT'),
+        Time.parse('Fri,	13	Mar	2020	22:13:42	PDT'),
+        Time.parse('Fri,	13	Mar	2020	23:13:42	PDT'),
+        Time.parse('Sat,	14	Mar	2020	00:13:42	PDT'),
+        Time.parse('Sat,	14	Mar	2020	01:13:42	PDT'),
+        Time.parse('Sat,	14	Mar	2020	02:13:42	PDT'),
+        Time.parse('Sat,	14	Mar	2020	03:13:42	PDT'),
+        Time.parse('Sat,	14	Mar	2020	04:13:42	PDT'),
+        Time.parse('Sat,	14	Mar	2020	05:13:42	PDT'),
+        Time.parse('Sat,	14	Mar	2020	06:13:42	PDT'),
+        Time.parse('Sat,	14	Mar	2020	07:13:42	PDT'),
+        Time.parse('Sat,	14	Mar	2020	08:13:42	PDT'),
+        Time.parse('Sat,	14	Mar	2020	09:13:42	PDT'),
+        Time.parse('Sat,	14	Mar	2020	10:13:42	PDT'),
+        Time.parse('Sat,	14	Mar	2020	11:13:42	PDT'),
+        Time.parse('Sat,	14	Mar	2020	12:13:42	PDT'),
+        Time.parse('Sat,	14	Mar	2020	13:13:42	PDT'),
+        Time.parse('Sat,	14	Mar	2020	14:13:42	PDT'),
+        Time.parse('Sat,	14	Mar	2020	15:13:42	PDT'),
+        Time.parse('Sat,	14	Mar	2020	16:13:42	PDT'),
+        Time.parse('Sat,	14	Mar	2020	17:13:42	PDT'),
+        Time.parse('Sat,	14	Mar	2020	18:13:42	PDT')
+      ])
+    end
+
+    it 'returns the correct result with an rrule of FREQ=HOURLY;COUNT=30;INTERVAL=10;WKST=MO;BYDAY=SA;BYMONTH=3,10;BYSETPOS=-3' do
+      rrule = 'FREQ=HOURLY;COUNT=30;INTERVAL=10;WKST=MO;BYDAY=SA;BYMONTH=3,10;BYSETPOS=-3'
+      dtstart = Time.parse('Fri,	13	Mar	2020	16:35:59	PDT')
+      timezone = 'America/Los_Angeles'
+
+      rrule = RRule::Rule.new(rrule, dtstart: dtstart, tzid: timezone)
+      expect(rrule.all).to match_array([
+        Time.parse('Sat,	14	Mar	2020	01:35:59	PDT'),
+        Time.parse('Sat,	14	Mar	2020	11:35:59	PDT'),
+        Time.parse('Sat,	14	Mar	2020	21:35:59	PDT'),
+        Time.parse('Sat,	21	Mar	2020	03:35:59	PDT'),
+        Time.parse('Sat,	21	Mar	2020	13:35:59	PDT'),
+        Time.parse('Sat,	21	Mar	2020	23:35:59	PDT'),
+        Time.parse('Sat,	28	Mar	2020	05:35:59	PDT'),
+        Time.parse('Sat,	28	Mar	2020	15:35:59	PDT'),
+        Time.parse('Sat,	03	Oct	2020	09:35:59	PDT'),
+        Time.parse('Sat,	03	Oct	2020	19:35:59	PDT'),
+        Time.parse('Sat,	10	Oct	2020	01:35:59	PDT'),
+        Time.parse('Sat,	10	Oct	2020	11:35:59	PDT'),
+        Time.parse('Sat,	10	Oct	2020	21:35:59	PDT'),
+        Time.parse('Sat,	17	Oct	2020	03:35:59	PDT'),
+        Time.parse('Sat,	17	Oct	2020	13:35:59	PDT'),
+        Time.parse('Sat,	17	Oct	2020	23:35:59	PDT'),
+        Time.parse('Sat,	24	Oct	2020	05:35:59	PDT'),
+        Time.parse('Sat,	24	Oct	2020	15:35:59	PDT'),
+        Time.parse('Sat,	31	Oct	2020	07:35:59	PDT'),
+        Time.parse('Sat,	31	Oct	2020	17:35:59	PDT'),
+        Time.parse('Sat,	06	Mar	2021	03:35:59	PDT'),
+        Time.parse('Sat,	06	Mar	2021	13:35:59	PDT'),
+        Time.parse('Sat,	06	Mar	2021	23:35:59	PDT'),
+        Time.parse('Sat,	13	Mar	2021	05:35:59	PDT'),
+        Time.parse('Sat,	13	Mar	2021	15:35:59	PDT'),
+        Time.parse('Sat,	20	Mar	2021	07:35:59	PDT'),
+        Time.parse('Sat,	20	Mar	2021	17:35:59	PDT'),
+        Time.parse('Sat,	27	Mar	2021	09:35:59	PDT'),
+        Time.parse('Sat,	27	Mar	2021	19:35:59	PDT'),
+        Time.parse('Sat,	02	Oct	2021	03:35:59	PDT')
+      ])
+    end
+  end
+
   context 'when DTSTART is a Date' do
     it 'returns the correct result with an rrule of FREQ=DAILY;COUNT=10 and a limit' do
       rrule = 'FREQ=DAILY;COUNT=10'
